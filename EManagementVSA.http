@@ -1,0 +1,6 @@
+@EManagementVSA_HostAddress = http://localhost:5007
+
+GET {{EManagementVSA_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
