@@ -14,4 +14,10 @@ public class Address
     [MaxLength(5)]
     [MinLength(5)]
     public int PostalCode { get; set; }
+
+    public Guid? OrganizationId { get; set; }
+    public Organization Organization { get; set; }
+
+    public Guid? EmployeeId { get; set; }
+    public Employee Employee { get; set; }
 }

@@ -1,10 +1,13 @@
 using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
+using Asp.Versioning.Builder;
 using Carter;
 using EManagementVSA.Configuration;
+using EManagementVSA.Middlewares.GlobalExceptionHandlingMiddleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// builder.Services.AddXmlDataContractSerializerFormatters();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -13,7 +16,7 @@ builder.Services.AddProjectConfiguration(builder.Configuration, builder);
 builder.Services.AddApiVersioning(setupAction =>
 {
     setupAction.DefaultApiVersion = new ApiVersion(1, 0);
-    setupAction.ReportApiVersions = true;
+    // setupAction.ReportApiVersions = true;
     setupAction.AssumeDefaultVersionWhenUnspecified = true;
     setupAction.ApiVersionReader = new UrlSegmentApiVersionReader();
 })
@@ -83,7 +86,18 @@ app.MapCarter();
 
 app.UseSerilogRequestLogging();
 
-app.UseHttpsRedirection();
+// ApiVersionSet apiVersionSet = app.NewApiVersionSet()
+//                                         .HasApiVersion(new ApiVersion(1))
+//                                         .ReportApiVersions()
+//                                         .Build();
 
+// RouteGroupBuilder routeGroupBuilder = app
+//     .MapGroup("api/v{v:apiVersion}/")    
+//     .WithApiVersionSet(apiVersionSet); 
+
+// routeGroupBuilder            
+app.UseMiddleware<GlobalExceptionHandlingMiddleware>();               
+
+app.UseHttpsRedirection();
 
 app.Run();

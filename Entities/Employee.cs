@@ -1,9 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+using EManagementVSA.Shared.Entities;
 using Microsoft.AspNetCore.Identity;
 
 namespace EManagementVSA.Entities;
 
-public class Employee : IdentityUser
+public class Employee
 {
         [Key]
         public Guid Id { get; set; }

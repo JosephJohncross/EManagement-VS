@@ -3,7 +3,9 @@ using System.Text;
 using Carter;
 using EManagementVSA.Data;
 using EManagementVSA.Entities;
-using FluentValidation;
+using EManagementVSA.Features.Department.GetSubDepartment;
+using EManagementVSA.Middlewares.GlobalExceptionHandlingMiddleware;
+using EManagementVSA.Services.Mail;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -18,8 +20,9 @@ public static class ProjectConfiguration
         var assembly = Assembly.GetExecutingAssembly();
         var secretKey =  config.GetSection("JwtSettings").GetValue<string>("Key");
 
-        services.AddDbContext<EmployeeDbContext>(options => {
-            options.UseNpgsql(config.GetConnectionString("Default"));
+        services.AddDbContext<ApplicationDbContext>(options => {
+            options.UseNpgsql(config.GetConnectionString("Default"),
+            options => options.MigrationsHistoryTable("EmployeeManagementHistory"));
         });
 
         services.AddLogging();
@@ -27,6 +30,13 @@ public static class ProjectConfiguration
         services.AddCarter();
         services.AddValidatorsFromAssembly(assembly);
         services.AddAutoMapper(assembly);
+
+        services.AddTransient<GlobalExceptionHandlingMiddleware>();
+        services.AddScoped<GetSubDepartmentServices>();
+
+        // CustomAttributeData services
+        services.AddSingleton<IEmailService, EmailService>();
+        services.Configure<SMTPParamterSettings>(config.GetSection("EmailSettings"));
 
         // Identity configuration
         services.AddAuthentication(option => {
@@ -47,9 +57,26 @@ public static class ProjectConfiguration
             };
         });
 
-        services.AddIdentity<Employee, IdentityRole>()
-                .AddEntityFrameworkStores<EmployeeDbContext>()
-                .AddApiEndpoints();
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("OrganizationAdmin", policy => policy.RequireRole(["HR", "Admin"]));
+            options.AddPolicy("Employee", policy => policy.RequireRole("Employee"));
+            options.AddPolicy("DepartmentHead", policy => policy.RequireRole("HeadOfDepartment"));
+        });
+
+        services.AddIdentity<ApplicationUser, IdentityRole>(options => {
+            options.Password.RequireDigit = true;
+            options.Password.RequiredLength = 8;
+            options.Password.RequireUppercase = true;
+            options.Password.RequireLowercase = true;
+            options.Password.RequireNonAlphanumeric = false;
+
+            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(3);
+            options.Lockout.MaxFailedAccessAttempts = 5;
+            options.Lockout.AllowedForNewUsers = true;
+        })
+        .AddEntityFrameworkStores<ApplicationDbContext>()
+        .AddApiEndpoints();
 
         builder.Host.UseSerilog((context, loggerConfig) => {
             loggerConfig.ReadFrom.Configuration(context.Configuration);
