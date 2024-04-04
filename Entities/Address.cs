@@ -20,4 +20,8 @@ public class Address
 
     public Guid? EmployeeId { get; set; }
     public Employee Employee { get; set; }
+
+    public string GetAddress () {
+        return  $"{Street}, {City}, {State}, {Country}";
+    }
 }

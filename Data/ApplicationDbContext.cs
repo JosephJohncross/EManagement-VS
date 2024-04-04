@@ -33,8 +33,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
         modelBuilder.Entity<ApplicationUser>()
             .HasOne<Organization>()
-            .WithOne()
-            .HasForeignKey<ApplicationUser>(e => e.OrganizationId);
+            .WithMany()
+            .HasForeignKey(e => e.OrganizationId);
 
         modelBuilder.Entity<Employee>()
             .HasOne(d => d.Department)

@@ -33,7 +33,7 @@ public class EmailTemplateLoader
                 string template = reader.ReadToEnd();
 
                 // Replace placeholders in the template with actual values
-                template = template.Replace("{INITIAL_PASSWORD}", initialPassword);
+                template = template.Replace("INITIAL_PASSWORD", initialPassword);
                 // Add more replacements as needed
 
                 return template;

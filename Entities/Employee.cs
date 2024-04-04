@@ -15,6 +15,7 @@ public class Employee
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public DateOnly DateOfBirth { get; set; }
+        public DateOnly EmploymentDate { get; set; }
 
         [EmailAddress]
         public required string Email { get; set; }

@@ -10,9 +10,9 @@ public class DeleteEmployeeEndpoint : ICarterModule
         .Build();
 
         
-        app.MapPost("api/v{v:apiVersion}/employee/{id}", async (ISender sender, Guid id) => {
-            
-            return Results.Ok();
+        app.MapDelete("api/v{v:apiVersion}/employee/{id}", async (ISender sender, Guid id) => {
+            var deleteEmployeeCommand = new DeleteEmployeeCommand {employeeId = id};
+            return Results.Ok(await sender.Send(deleteEmployeeCommand));
         })
         .WithApiVersionSet(apiVersionSet)
         .Produces(StatusCodes.Status201Created)

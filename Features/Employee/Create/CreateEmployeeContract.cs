@@ -8,5 +8,6 @@ public record CreateEmployeeRequest(
     string PhoneNumber,
     Guid DepartmentId,
     Guid OrganizationId,
-    List<string> Positions
+    List<string>? Positions,
+    DateOnly EmploymentDate
 );

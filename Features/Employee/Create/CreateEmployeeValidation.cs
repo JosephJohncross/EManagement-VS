@@ -9,5 +9,6 @@ public class CreateEmployeeValidation : AbstractValidator<CreateEmployeeRequest>
           RuleFor(org => org.DateOfBirth).NotEmpty().WithMessage("Date of Birth is required");
           RuleFor(org => org.Email).NotEmpty().WithMessage("Email is required");
           RuleFor(org => org.PhoneNumber).NotEmpty().WithMessage("PhoneNumber is required");
+          RuleFor(org => org.EmploymentDate).NotEmpty().WithMessage("Employement Date is required");
     }
 }

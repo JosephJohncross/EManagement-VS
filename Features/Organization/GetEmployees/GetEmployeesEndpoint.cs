@@ -11,9 +11,9 @@ public class GetEmployeesEndpoint : ICarterModule
         .Build();
 
         
-        app.MapGet("api/v{v:apiVersion}/organization/employees", async (ISender sender) => {
-            
-            return Results.Ok();
+        app.MapGet("api/v{v:apiVersion}/organization/{id}/employees", async (ISender sender, Guid id) => {
+            var getEmployeeByOrganization = new GetEmployeesQuery {organizationId = id};
+            return Results.Ok(await sender.Send(getEmployeeByOrganization));
         })
         .WithApiVersionSet(apiVersionSet)
         .Produces(StatusCodes.Status201Created)

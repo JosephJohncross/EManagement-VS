@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using EManagementVSA.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EManagementVSA.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240402133208_EMployeementDateColumnForEmployee")]
+    partial class EMployeementDateColumnForEmployee
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -138,7 +141,8 @@ namespace EManagementVSA.Migrations
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.HasIndex("OrganizationId");
+                    b.HasIndex("OrganizationId")
+                        .IsUnique();
 
                     b.ToTable("AspNetUsers", (string)null);
                 });
@@ -194,8 +198,8 @@ namespace EManagementVSA.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateOnly>("EmploymentDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("EmploymentDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -414,8 +418,8 @@ namespace EManagementVSA.Migrations
                         .IsRequired();
 
                     b.HasOne("EManagementVSA.Entities.Organization", null)
-                        .WithMany()
-                        .HasForeignKey("OrganizationId")
+                        .WithOne()
+                        .HasForeignKey("EManagementVSA.Entities.ApplicationUser", "OrganizationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

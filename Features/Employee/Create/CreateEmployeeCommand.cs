@@ -50,11 +50,12 @@ public class CreateEmployeeCommandHandler : IRequestHandler<CreateEmployeeComman
             throw new EmployeeManagementNotFoundException("Department does not exist");
         }
 
-
+        if (department.OrganizationId != organization.Id){
+            throw new EmployeeManagementBadRequestException("Department does not exist");
+        }
        
         employee.Department = department;
         employee.Organization = organization;
-
 
 
         await _context.Employees.AddAsync(employee);
@@ -72,38 +73,43 @@ public class CreateEmployeeCommandHandler : IRequestHandler<CreateEmployeeComman
             UserName = request.EmployeeeDetails.Email
         };
 
-        var initialPassword = CreateEmployeeHelper.GenerateInitialPassword();
+        // var initialPassword = CreateEmployeeHelper.GenerateInitialPassword();
        
-        var result = await _userManager.CreateAsync(user, initialPassword);
+        var result = await _userManager.CreateAsync(user, "IP8nKaPt2");
         if (!result.Succeeded)
         {
             throw new EmployeeManagementBadRequestException(result.Errors.ToString());
         }
 
-        var emailTemplate = EmailTemplateLoader.LoadTemplate("EManagementVSA.EmailTemplate.onboard_template.html", initialPassword);
         // Send onboarding mail and reset password
-        // var emailTemplate = EmailTemplateLoader.LoadTemplate("EManagementVSA/EmailTemplate/onboard_template.html", initialPassword);
-        var sendNewEmailParmaeter = new SendEmailParameters(
-            "Welcome on board. Please login to reset your password",
-            "josephibochi@gmail.com",
-            employee.Email,
-            "Password Reset",
-            emailTemplate
-        );
+        // var emailTemplate = EmailTemplateLoader.LoadTemplate("EManagementVSA.EmailTemplate.onboard_template.html", initialPassword);
 
-        await _emailService.SendEmailAsync(sendNewEmailParmaeter);
+        // var sendNewEmailParmaeter = new SendEmailParameters(
+        //     "Welcome on board. Please login to reset your password",
+        //     "",
+        //     employee.Email,
+        //     "Password Reset",
+        //     emailTemplate
+        // );
+
+        // await _emailService.SendEmailAsync(sendNewEmailParmaeter);
 
         // Asign Roles to application user
-        await _roleManager.CreateAsync(new IdentityRole(""));
+        if (!await _roleManager.RoleExistsAsync("Employee"))
+        {
+            await _roleManager.CreateAsync(new IdentityRole("Employee"));
+        }
         await _userManager.AddToRoleAsync(user, "Employee");
 
-        foreach (var role in request.EmployeeeDetails.Positions)
-        {
-            if (!await _roleManager.RoleExistsAsync(role))
+        if (request.EmployeeeDetails.Positions != null){
+            foreach (var role in request.EmployeeeDetails.Positions)
             {
-                await _roleManager.CreateAsync(new IdentityRole(role));
+                if (!await _roleManager.RoleExistsAsync(role))
+                {
+                    await _roleManager.CreateAsync(new IdentityRole(role));
+                }
+                await _userManager.AddToRoleAsync(user, role);
             }
-            await _userManager.AddToRoleAsync(user, role);
         }
 
         return new BaseResponse<string>{

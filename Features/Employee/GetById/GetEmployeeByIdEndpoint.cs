@@ -1,7 +1,7 @@
 
 namespace EManagementVSA.Features.Employee.GetById;
 
-public class GetEmployeeById : ICarterModule
+public class GetEmployeeByIdEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
@@ -12,8 +12,8 @@ public class GetEmployeeById : ICarterModule
 
         
         app.MapGet("api/v{v:apiVersion}/employee/{id}", async (ISender sender, Guid id) => {
-            
-            return Results.Ok();
+            var getEmployeeById = new GetEmployeeByIdQuery {employeeId = id};
+            return Results.Ok(await sender.Send(getEmployeeById));
         })
         .WithApiVersionSet(apiVersionSet)
         .Produces(StatusCodes.Status201Created)
