@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 
 namespace EManagementVSA.Features.Organization.GetDepartments;
 
@@ -19,9 +20,11 @@ public class GetDepartmentEndpoint : ICarterModule
         .WithApiVersionSet(apiVersionSet)
         .Produces(StatusCodes.Status201Created)
         .Produces(StatusCodes.Status400BadRequest)
+        .Produces(StatusCodes.Status403Forbidden)
         .WithName("GetOrganizationDepartments")
         .WithOpenApi()
         .WithTags("Organization")
-        .MapToApiVersion(1);
+        .MapToApiVersion(1)
+        .RequireAuthorization(new AuthorizeAttribute() { Roles = "Admin, HR"});
     }
 }

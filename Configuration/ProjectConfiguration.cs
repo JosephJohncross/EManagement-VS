@@ -78,6 +78,16 @@ public static class ProjectConfiguration
         .AddEntityFrameworkStores<ApplicationDbContext>()
         .AddApiEndpoints();
 
+        services.AddCors(options => {
+            options.AddPolicy("AllowAny", builder => {
+                builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            });
+        });
+
+        services.AddHttpContextAccessor();
+
         builder.Host.UseSerilog((context, loggerConfig) => {
             loggerConfig.ReadFrom.Configuration(context.Configuration);
         });
