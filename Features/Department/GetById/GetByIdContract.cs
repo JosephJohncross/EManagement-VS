@@ -6,7 +6,7 @@ namespace EManagementVSA.Features.Department.GetById;
 public record GetByIdResponse(
         string Name,
         string Abbreviation,
-        Guid Organization
+        Guid DepartmentId
 );
 
 public static class DepartmentMappings
@@ -20,7 +20,7 @@ public static class DepartmentMappings
                 return new GetByIdResponse(
                         department.Name,
                         department.Abbreviation,
-                        department.OrganizationId
+                        department.Id
                 );
         }
 }

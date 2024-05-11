@@ -4,6 +4,7 @@ public class GetEmployeeByOrganizationResponse {
     public Guid Id { get; set; }
     public string FullName { get; set; }
     public string Email { get; set; }
+    public DateOnly DateOfBirth { get; set; }
     public string PhoneNumber { get; set; }
     public DateOnly EmploymentDate { get; set; }
     public string DepartmentName { get; set; }
@@ -22,7 +23,8 @@ public static class EmployeeMappings
                 FullName = employee.GetFullName(),
                 Id = employee.Id,
                 PhoneNumber = employee.PhoneNumber,
-                Positions = employee.Positions
+                Positions = employee.Positions,
+                DateOfBirth = employee.DateOfBirth,
             };
         }
 }

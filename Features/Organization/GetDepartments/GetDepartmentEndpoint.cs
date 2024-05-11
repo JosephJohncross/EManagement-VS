@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 
 namespace EManagementVSA.Features.Organization.GetDepartments;
@@ -12,7 +13,7 @@ public class GetDepartmentEndpoint : ICarterModule
         .Build();
 
         
-        app.MapGet("api/v{v:apiVersion}/organization/{id}/departments", async (ISender sender, Guid id) => {
+        app.MapGet("api/v{v:apiVersion}/organization/{id}/departments", [Authorize(Policy = "CreateEmployee", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] async (ISender sender, Guid id) => {
             
             var getDepartmentsQuery = new GetDepartmentQuery {OrganizationId = id};
             return Results.Ok(await sender.Send(getDepartmentsQuery));
@@ -24,7 +25,6 @@ public class GetDepartmentEndpoint : ICarterModule
         .WithName("GetOrganizationDepartments")
         .WithOpenApi()
         .WithTags("Organization")
-        .MapToApiVersion(1)
-        .RequireAuthorization(new AuthorizeAttribute() { Roles = "Admin, HR"});
+        .MapToApiVersion(1);
     }
 }

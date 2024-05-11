@@ -1,0 +1,31 @@
+@using EManagementVSA.Features.Department.GetById
+
+@model List<GetByIdResponse>
+
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+
+
+<div class="mx-auto bg-white p-8 rounded-lg">
+    <h1 class="text-2xl text-center font-bold mb-10 text-green-500">Departments</h1>
+
+    <table class="w-full border-collapse border border-gray-300">
+      <thead>
+        <tr class="bg-gray-100">
+          <th class="border border-gray-300 px-4 py-2">Department Name</th>
+          <th class="border border-gray-300 px-4 py-2">Department Abbreviation</th>
+          <th class="border border-gray-300 px-4 py-2">No of Employees</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var item in Model)
+        {
+            <tr class="">
+            <td class="border border-gray-300 px-4 py-2">@item.Name</td>
+            <td class="border border-gray-300 px-4 py-2">@item.Abbreviation</td>
+            </tr>
+        }
+      </tbody>
+    </table>
+  </div>

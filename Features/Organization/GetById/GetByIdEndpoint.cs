@@ -24,6 +24,7 @@ public class GetByIdEndpoint : ICarterModule
         .WithName("GetOrganizationById")
         .WithOpenApi()
         .WithTags("Organization")
-        .MapToApiVersion(1);
+        .MapToApiVersion(1)
+        .RequireAuthorization("CreateEmployee");
     }
 }

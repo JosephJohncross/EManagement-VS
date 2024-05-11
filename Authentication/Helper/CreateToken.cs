@@ -7,7 +7,7 @@ namespace EManagementVSA.Authentication.Helper;
 
 public static class GenerateUserToken
 {
-    public static string CreateToken(IList<Claim> claims, IConfiguration config)
+    public static string CreateToken(IConfiguration config, List<Claim> claims)
     {
         var jwtSectionSetting = config.GetSection("JwtSettings");
         var securityKey = Encoding.ASCII.GetBytes(jwtSectionSetting.GetValue<string>("Key") ?? string.Empty);
@@ -17,9 +17,10 @@ public static class GenerateUserToken
 
         var jwtSecurityToken = new JwtSecurityToken(
             audience: jwtSectionSetting.GetValue<string>("Audience"),
-            issuer: jwtSectionSetting.GetValue<string>("Issuer"),
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(jwtSectionSetting.GetValue<double>("DurationInMinutes"))
+            issuer: jwtSectionSetting.GetValue<string>("Issuer"),
+            expires: DateTime.UtcNow.AddMinutes(jwtSectionSetting.GetValue<double>("DurationInMinutes")),
+            signingCredentials: signingCredentials
         );
 
         return new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);

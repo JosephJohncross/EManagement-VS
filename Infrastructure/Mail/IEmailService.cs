@@ -1,4 +1,4 @@
-namespace EManagementVSA.Services.Mail;
+namespace EManagementVSA.Infrastructure.Mail;
 
 public interface IEmailService
 {

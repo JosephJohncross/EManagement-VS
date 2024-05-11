@@ -1,7 +1,7 @@
 using EManagementVSA.Data;
 using EManagementVSA.Entities;
 using EManagementVSA.Middlewares.GlobalExceptionHandlingMiddleware;
-using EManagementVSA.Services.Mail;
+using EManagementVSA.Infrastructure.Mail;
 using EManagementVSA.Shared.Contract;
 using EManagementVSA.Shared.Helper;
 using Microsoft.AspNetCore.Identity;
@@ -101,16 +101,12 @@ public class CreateEmployeeCommandHandler : IRequestHandler<CreateEmployeeComman
         }
         await _userManager.AddToRoleAsync(user, "Employee");
 
-        if (request.EmployeeeDetails.Positions != null){
-            foreach (var role in request.EmployeeeDetails.Positions)
-            {
-                if (!await _roleManager.RoleExistsAsync(role))
-                {
-                    await _roleManager.CreateAsync(new IdentityRole(role));
-                }
-                await _userManager.AddToRoleAsync(user, role);
-            }
+        var roleStringRepresentation = CreateEmployeeContract.RoleReprentation(request.EmployeeeDetails.Role);
+        if (!await _roleManager.RoleExistsAsync(roleStringRepresentation))
+        {
+            await _roleManager.CreateAsync(new IdentityRole(roleStringRepresentation));
         }
+        await _userManager.AddToRoleAsync(user, roleStringRepresentation);
 
         return new BaseResponse<string>{
             Data = user.Id,

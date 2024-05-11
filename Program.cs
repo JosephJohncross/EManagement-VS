@@ -3,10 +3,17 @@ using Asp.Versioning.ApiExplorer;
 using Asp.Versioning.Builder;
 using Carter;
 using EManagementVSA.Configuration;
+using EManagementVSA.Data;
 using EManagementVSA.Middlewares.GlobalExceptionHandlingMiddleware;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+FirebaseApp.Create(new AppOptions() {
+    Credential = GoogleCredential.FromFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "emag-56497-firebase-adminsdk-sb5fr-ef4ae06167.json")),
+});
 
 // builder.Services.AddXmlDataContractSerializerFormatters();
 
@@ -48,6 +55,7 @@ builder.Services.AddApiVersioning(setupAction =>
     options.GroupNameFormat = "'v'VV";
     options.SubstituteApiVersionInUrl = true;
 });
+
 
 var apiVersionDescriptionProvider = builder.Services.BuildServiceProvider().GetService<IApiVersionDescriptionProvider>();
 
@@ -91,7 +99,7 @@ builder.Services.AddSwaggerGen(options =>
 
 var app = builder.Build();
 
-app.UseCors("AllowAll");
+app.UseCors("AllowAny");
 
 if (app.Environment.IsDevelopment())
 {
@@ -105,6 +113,12 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+using(var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope()) {
+    SeedData.Initialize(serviceScope.ServiceProvider);
+}
+
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapCarter();
 
 app.UseSerilogRequestLogging();
@@ -122,7 +136,5 @@ app.UseSerilogRequestLogging();
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();               
 
 app.UseHttpsRedirection();
-app.UseAuthentication();
-app.UseAuthorization();
 
 app.Run();

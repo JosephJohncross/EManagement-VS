@@ -1,3 +1,5 @@
+using EManagementVSA.Features.Department.GetById;
+
 namespace EManagementVSA.Authentication.Features.Login;
 
 public record LoginRequestData(
@@ -5,6 +7,24 @@ public record LoginRequestData(
     string Password,
     bool RememberMe = false
 );
+
+public record LoginResponseData(
+    string token,
+    List<string> roles
+);
+
+public record LoginResponseDataWithOrgDetails(
+    LoginResponseData data,
+    OrganizationDetails OrganizationDetails
+);
+
+public record OrganizationDetails (
+    Guid OrganizationId, 
+    string OrganizationName,
+    string OrganizationEmail
+);
+
+
 
 public class LoginValidator : AbstractValidator<LoginRequestData>
 {

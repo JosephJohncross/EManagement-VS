@@ -17,7 +17,7 @@ public class DepartmentMappingProfile : Profile
 
         
         CreateMap<Department, GetByIdResponse>()
-            .ForMember(d => d.Organization, opt => opt.MapFrom(s => s.OrganizationId))
+            .ForMember(d => d.DepartmentId, opt => opt.MapFrom(s => s.Id))
             .ReverseMap();
             
     }

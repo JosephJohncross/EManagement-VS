@@ -20,6 +20,7 @@ public class GlobalExceptionHandlingMiddleware : IMiddleware
                     "NotFound Error",
                     context
                 );
+
             }
             catch (EmployeeManagementBadRequestException e)
             {
@@ -29,6 +30,7 @@ public class GlobalExceptionHandlingMiddleware : IMiddleware
                     "Bad Request Error",
                     context
                 );
+
             }
             catch (EmployeeManagementUnAuthorizedException e)
             {
@@ -38,6 +40,7 @@ public class GlobalExceptionHandlingMiddleware : IMiddleware
                     "Unauthorized Error",
                     context
                 );
+
             }
             catch (EmployeeManagementForbiddenException e)
             {
@@ -47,6 +50,7 @@ public class GlobalExceptionHandlingMiddleware : IMiddleware
                     "Forbidden Error",
                     context
                 );
+
             }
             catch (EmployeeManagementServiceNotFound e)
             {
@@ -56,6 +60,7 @@ public class GlobalExceptionHandlingMiddleware : IMiddleware
                     "Internal server Error",
                     context
                 );
+
             }
             catch (Exception e)
             {
@@ -65,6 +70,7 @@ public class GlobalExceptionHandlingMiddleware : IMiddleware
                     "Internal server Error",
                     context
                 );
+
             }
             
         }

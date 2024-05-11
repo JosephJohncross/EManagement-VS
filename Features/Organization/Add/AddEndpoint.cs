@@ -36,6 +36,7 @@ public class AddEndpoint : ICarterModule
         .WithName("CreateOrganization")
         .WithOpenApi()
         .WithTags("Organization")
-        .MapToApiVersion(1);
+        .MapToApiVersion(1)
+        .RequireAuthorization("Admin");
     }
 }

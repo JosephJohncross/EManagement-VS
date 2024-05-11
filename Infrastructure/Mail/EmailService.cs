@@ -3,7 +3,7 @@ using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
 
-namespace EManagementVSA.Services.Mail;
+namespace EManagementVSA.Infrastructure.Mail;
 
 public class EmailService : IEmailService
 {

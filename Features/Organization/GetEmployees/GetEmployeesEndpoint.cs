@@ -1,4 +1,6 @@
 using System;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 namespace EManagementVSA.Features.Organization.GetEmployees;
 
 public class GetEmployeesEndpoint : ICarterModule
@@ -11,7 +13,7 @@ public class GetEmployeesEndpoint : ICarterModule
         .Build();
 
         
-        app.MapGet("api/v{v:apiVersion}/organization/{id}/employees", async (ISender sender, Guid id) => {
+        app.MapGet("api/v{v:apiVersion}/organization/{id}/employees", [Authorize(Policy = "CreateEmployee", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] async (ISender sender, Guid id) => {
             var getEmployeeByOrganization = new GetEmployeesQuery {organizationId = id};
             return Results.Ok(await sender.Send(getEmployeeByOrganization));
         })
@@ -22,5 +24,6 @@ public class GetEmployeesEndpoint : ICarterModule
         .WithOpenApi()
         .WithTags("Organization")
         .MapToApiVersion(1);
+        // .RequireAuthorization("CreateEmployee");
     }
 }

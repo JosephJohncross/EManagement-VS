@@ -1,0 +1,38 @@
+@using EManagementVSA.Features.Organization.GetEmployees
+
+@model List<GetEmployeeByOrganizationResponse>
+
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+
+
+<div class="mx-auto bg-white p-8 rounded-lg">
+    <h1 class="text-2xl text-center font-bold mb-10 text-green-500">Employee Bio</h1>
+
+    <table class="w-full border-collapse border border-gray-300">
+      <thead>
+        <tr class="bg-gray-100">
+          <th class="border border-gray-300 px-4 py-2">Full Name</th>
+          <th class="border border-gray-300 px-4 py-2">Department</th>
+          <th class="border border-gray-300 px-4 py-2">Date of Birth</th>
+          <th class="border border-gray-300 px-4 py-2">Email</th>
+          <th class="border border-gray-300 px-4 py-2">Phone Number</th>
+          <th class="border border-gray-300 px-4 py-2">Employment Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var item in Model)
+        {
+            <tr class="">
+            <td class="border border-gray-300 px-4 py-2">@item.FullName</td>
+            <td class="border border-gray-300 px-4 py-2">@item.DepartmentName</td>
+            <td class="border border-gray-300 px-4 py-2">@item.DateOfBirth</td>
+            <td class="border border-gray-300 px-4 py-2">@item.Email</td>
+            <td class="border border-gray-300 px-4 py-2">@item.PhoneNumber</td>
+            <td class="border border-gray-300 px-4 py-2">@item.EmploymentDate</td>
+            </tr>
+        }
+      </tbody>
+    </table>
+  </div>

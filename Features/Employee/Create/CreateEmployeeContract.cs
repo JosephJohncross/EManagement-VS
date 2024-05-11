@@ -9,5 +9,27 @@ public record CreateEmployeeRequest(
     Guid DepartmentId,
     Guid OrganizationId,
     List<string>? Positions,
-    DateOnly EmploymentDate
+    DateOnly EmploymentDate,
+    Role Role
 );
+
+public enum Role {
+    HR,
+    DepartmentHead,
+    Employee
+}
+
+public static class CreateEmployeeContract {
+    public static string RoleReprentation (Role role) {
+
+        if ( role is Role.HR ) {
+            return "HR";
+        }else if (role is Role.DepartmentHead){
+            return "DepartmentHead";
+        }else if (role is Role.Employee){
+            return "Employee";
+        }
+        return "";
+    }
+
+} 
