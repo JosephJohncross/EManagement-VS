@@ -20,12 +20,14 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, BaseResponse>
     private readonly SignInManager<ApplicationUser> _signinManager;
     private readonly ApplicationDbContext _context;
     private readonly IConfiguration _config;
-    public LoginCommandHandler(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IConfiguration config, ApplicationDbContext context)
+    private readonly LoginHelper _loginHelper;
+    public LoginCommandHandler(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IConfiguration config, ApplicationDbContext context, LoginHelper loginHelper)
     {
         _signinManager = signInManager;
         _userManager = userManager;
         _config = config;
         _context = context;
+        _loginHelper = loginHelper;
     }
 
     public async Task<BaseResponse> Handle(LoginCommand request, CancellationToken cancellationToken)
@@ -36,43 +38,72 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, BaseResponse>
             throw new EmployeeManagementNotFoundException("Invalid login credential");
         }
 
+        var isPasswordCorrect = await _loginHelper.VerifyPassword(user, request.requestData.Password);
+        if (!isPasswordCorrect)
+        {
+            throw new EmployeeManagementNotFoundException("Invalid login credential");
+        }
+
         var roles = await _userManager.GetRolesAsync(user);
         var isHr = await _userManager.IsInRoleAsync(user, "HR");
 
         var claims = new List<Claim>();
-        
-        if (roles != null) {
-            foreach (var role in roles) {
+
+        if (roles != null)
+        {
+            foreach (var role in roles)
+            {
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
             claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
             // claims.Add(new Claim("OrganizationID", user.OrganizationId.ToString()));
         }
-        
-     
-        var token = GenerateUserToken.CreateToken(_config,  claims);
-        if (isHr){
+
+
+        var token = GenerateUserToken.CreateToken(_config, claims);
+        if (isHr)
+        {
             var organization = await _context.Organizations.FindAsync(user.OrganizationId);
-            var organizationDetails =  new OrganizationDetails(
+            var organizationDetails = new OrganizationDetails(
                 organization.Id,
                 organization.Name,
                 organization.Email
             );
-            var loginResponse = new LoginResponseData(token, (List<string>) roles);
+            var loginResponse = new LoginResponseData(token, (List<string>)roles);
 
-            return new BaseResponse {
+            return new BaseResponse
+            {
                 Data = new LoginResponseDataWithOrgDetails(loginResponse, organizationDetails),
                 Message = "Login successful",
                 Status = true
             };
 
-        } else {
-            return new BaseResponse {
-                Data = new LoginResponseData(token, (List<string>) roles),
+        }
+        else
+        {
+            return new BaseResponse
+            {
+                Data = new LoginResponseData(token, (List<string>)roles),
                 Message = "Login successful",
                 Status = true
             };
         }
 
+    }
+}
+
+public class LoginHelper
+{
+    private readonly UserManager<ApplicationUser> _userManager;
+    public LoginHelper(UserManager<ApplicationUser> userManager)
+    {
+        _userManager = userManager;
+    }
+
+
+    public async Task<bool> VerifyPassword(ApplicationUser user, string password)
+    {
+        var result = await _userManager.CheckPasswordAsync(user, password);
+        return result;
     }
 }

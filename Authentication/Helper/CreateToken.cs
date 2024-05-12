@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using EManagementVSA.Entities;
 using Microsoft.IdentityModel.Tokens;
 
 namespace EManagementVSA.Authentication.Helper;

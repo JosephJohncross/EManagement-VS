@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.DependencyInjection;
+using EManagementVSA.Authentication.Features.Login;
 
 namespace EManagementVSA.Configuration;
 
@@ -37,6 +38,7 @@ public static class ProjectConfiguration
 
         services.AddTransient<GlobalExceptionHandlingMiddleware>();
         services.AddScoped<GetSubDepartmentServices>();
+        services.AddScoped<LoginHelper>();
 
         // CustomAttributeData services
         services.AddSingleton<IEmailService, EmailService>();
